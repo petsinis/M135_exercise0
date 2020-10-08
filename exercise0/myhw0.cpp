@@ -1,7 +1,7 @@
 #include <iostream>
 #include <fstream>
 #include <string>
-#include <map>
+#include <unordered_map>
 #include <queue>
 using namespace std;
 struct pairs {
@@ -12,28 +12,25 @@ int main(int argc, char** argv)
 {
     string str;
     queue<pairs> input_data;
-    map<int, int> map_key;
-    map<int, map<int,int> >  main_map;
-    while (getline(cin, str))
+    unordered_map<int, int> map_key;
+    unordered_map<int, unordered_map<int,int> >  main_map;
+	pairs my_pair;
+	unordered_map<int, int> temp_map_value;
+    while (cin>>str)
     {
-        string token1 = (str.substr(0, str.find("|")));
-        string token2 = (str.substr(str.find("|")+1,str.length()));
+		size_t pos=str.find("|");
 
-
-        int my_key=stoi(token1);
-        int my_value=stoi(token2);
-
-        pairs my_pair;
+        int my_key=stoi((str.substr(0,pos)));
+        int my_value=stoi((str.substr(pos+1)));
+        
         my_pair.key=my_key;
         my_pair.value=my_value;
 
         input_data.push(my_pair);
+        
+        if (map_key.count(my_key)){
 
-        map<int, int> temp_map_value;
-
-        if (map_key.find(my_key) != map_key.end()){
-            temp_map_value=main_map[my_key];
-            if(temp_map_value.find(my_value)!=temp_map_value.end()){
+            if(main_map[my_key].count(my_value)){
                 continue;
             }else{
                 map_key[my_key]=map_key[my_key]+1;
@@ -41,9 +38,10 @@ int main(int argc, char** argv)
             }
         }else{
             map_key[my_key]=1;
-            (main_map[my_key])[my_value]=map_key[my_key];
+            (main_map[my_key])[my_value]=1;
         }
     }
+	
     while(!(input_data.empty())){
         pairs my_pair=input_data.front();
         input_data.pop();
